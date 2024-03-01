@@ -1,6 +1,8 @@
 package com.example.myapplication.presentation
 
 // Assurez-vous d'importer correctement les composants Compose et autres nécessaires
+import android.content.Intent
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -31,10 +33,12 @@ val itemsList = listOf(
 )
 
 @Composable
-fun MenuItemView(menuItem: Item) {
+fun MenuItemView(menuItem: Item ,  onClickAction: () -> Unit) {
     Text(
         text = menuItem.title,
-        modifier = Modifier.padding(10.dp)
+        modifier = Modifier
+            .padding(10.dp)
+            .clickable(onClick = onClickAction)
         // La gestion du clic peut être ajoutée ici si nécessaire
     )
 }
@@ -44,7 +48,10 @@ fun MenuScreen() {
     MyApplicationTheme {
         ScalingLazyColumn {
             items(itemsList) { menuItem ->
-                MenuItemView(menuItem = menuItem)
+                MenuItemView(menuItem = menuItem){
+                    // L'action à exécuter lors du clic
+
+                }
             }
         }
     }
