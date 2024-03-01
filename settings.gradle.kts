@@ -13,6 +13,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "SecureCircle"
+rootProject.name = "My application"
 include(":app")
  
