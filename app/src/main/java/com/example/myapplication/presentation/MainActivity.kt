@@ -46,9 +46,7 @@ class MainActivity : ComponentActivity() {
                 // L'écran d'accueil avec le bouton pour aller au menu
                 WearApp("Android") { showMenuScreen = true }
             } else {
-
                 val context = LocalContext.current
-                // L'écran de menu
                 MenuScreen(context)
             }
         }

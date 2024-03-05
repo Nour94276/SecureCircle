@@ -1,20 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+    <uses-feature android:name="android.hardware.location.gps" android:required="false"/>
+    <uses-feature android:name="android.hardware.location.network" android:required="false"/>
 
     <uses-feature android:name="android.hardware.type.watch" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@android:style/Theme.DeviceDefault">
-
-
+        android:theme="@style/AppTheme">
         <uses-library
             android:name="com.google.android.wearable"
             android:required="true" />
@@ -25,7 +26,9 @@
         <meta-data
             android:name="com.google.android.wearable.standalone"
             android:value="true" />
-
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value=""/>
         <activity
             android:name=".presentation.MainActivity"
             android:exported="true"
@@ -38,8 +41,9 @@
         </activity>
         <activity
             android:name=".presentation.LocationActivity"
-            android:exported="false"
-            android:theme="@android:style/Theme.DeviceDefault.NoActionBar" />
+            android:exported="true"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:taskAffinity="" />
     </application>
 
 </manifest>

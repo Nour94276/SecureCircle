@@ -1,6 +1,7 @@
 package com.example.myapplication.presentation
 
 // Assurez-vous d'importer correctement les composants Compose et autres nécessaires
+
 import android.content.Context
 import android.content.Intent
 import androidx.compose.foundation.clickable
@@ -60,7 +61,7 @@ fun MenuScreen(context: Context) {
             items(itemsList) { menuItem ->
                 MenuItemView(menuItem = menuItem) {
                     // Action spécifique, par exemple, naviguer vers une autre activité
-                    if (menuItem.title == "Élément Spécial") {
+                    if (menuItem.title == "Géolocalisation") {
                         val intent = Intent(context, LocationActivity::class.java)
                         context.startActivity(intent)
                     }
