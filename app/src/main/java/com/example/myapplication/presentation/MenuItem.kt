@@ -1,6 +1,10 @@
 package com.example.myapplication.presentation
 
 // Assurez-vous d'importer correctement les composants Compose et autres nécessaires
+
+import android.content.Context
+import android.content.Intent
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -9,6 +13,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.material.ScalingLazyColumn
@@ -31,25 +36,40 @@ val itemsList = listOf(
 )
 
 @Composable
-fun MenuItemView(menuItem: Item) {
-    Text(
+fun MenuItemView(menuItem: Item, onClickAction: () -> Unit) {
+    val context = LocalContext.current
+    if(menuItem.title == "Géolocalisation") {
+        Text(
+            text = menuItem.title,
+            modifier = Modifier
+                .padding(10.dp)
+                .clickable(onClick = onClickAction)
+        )
+    }
+    else{
+        Text(
         text = menuItem.title,
-        modifier = Modifier.padding(10.dp)
-        // La gestion du clic peut être ajoutée ici si nécessaire
-    )
+        modifier = Modifier
+            .padding(10.dp) )
+    }
 }
 
 @Composable
-fun MenuScreen() {
+fun MenuScreen(context: Context) {
     MyApplicationTheme {
         ScalingLazyColumn {
             items(itemsList) { menuItem ->
-                MenuItemView(menuItem = menuItem)
+                MenuItemView(menuItem = menuItem) {
+                    // Action spécifique, par exemple, naviguer vers une autre activité
+                    if (menuItem.title == "Géolocalisation") {
+                        val intent = Intent(context, LocationActivity::class.java)
+                        context.startActivity(intent)
+                    }
+                }
             }
         }
     }
 }
-
 @Composable
 fun ItemView(item: Item) {
     Column(modifier = Modifier.padding(16.dp)) {

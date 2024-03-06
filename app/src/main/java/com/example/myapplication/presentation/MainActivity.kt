@@ -30,17 +30,11 @@ import androidx.wear.compose.material.Text
 import androidx.wear.compose.material.TimeText
 import com.example.myapplication.R
 import com.example.myapplication.presentation.theme.MyApplicationTheme
-import androidx.activity.compose.setContent
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.*
-import androidx.wear.compose.material.*
-import com.example.myapplication.presentation.theme.MyApplicationTheme
+import androidx.compose.ui.platform.LocalContext
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
-
         super.onCreate(savedInstanceState)
 
         setTheme(android.R.style.Theme_DeviceDefault)
@@ -52,8 +46,8 @@ class MainActivity : ComponentActivity() {
                 // L'écran d'accueil avec le bouton pour aller au menu
                 WearApp("Android") { showMenuScreen = true }
             } else {
-                // L'écran de menu
-                MenuScreen()
+                val context = LocalContext.current
+                MenuScreen(context)
             }
         }
     }
