@@ -1,6 +1,5 @@
 package com.example.myapplication.presentation
 
-import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.R
 import android.os.Bundle
 import android.view.View

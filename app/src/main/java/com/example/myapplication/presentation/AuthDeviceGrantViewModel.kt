@@ -18,8 +18,8 @@ import kotlinx.coroutines.launch
 private const val TAG = "AuthDeviceGrantViewModel"
 
 // TODO Add your client id & secret here (for dev purposes only).
-private const val CLIENT_ID = ""
-private const val CLIENT_SECRET = ""
+private const val CLIENT_ID = "461754450005-0isb6tbb087e2b3n8218k7am8evchljq.apps.googleusercontent.com"
+private const val CLIENT_SECRET = "BC:24:FD:C3:79:D6:4A:26:19:5C:2E:B4:02:37:03:FA:59:A7:E0:0F"
 
 /**
  * The viewModel that implements the OAuth flow. The method [startAuthFlow] implements the
