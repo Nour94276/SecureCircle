@@ -49,8 +49,10 @@ android {
 }
 
 dependencies {
-    implementation ("world.mappable.android:maps.mobile:1.0.2-lite")
+    implementation ("com.google.android.gms:play-services-location:18.0.0")
     implementation ("org.osmdroid:osmdroid-android:6.1.10")
+    implementation ("org.osmdroid:osmdroid-android:6.1.14")
+    implementation ("world.mappable.android:maps.mobile:1.0.2-lite")
     implementation("com.google.android.gms:play-services-wearable:18.1.0")
     implementation(platform("androidx.compose:compose-bom:2024.02.01"))
     implementation("androidx.compose.ui:ui")
