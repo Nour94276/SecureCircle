@@ -1,7 +1,12 @@
 
 package com.example.myapplication.presentation
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.location.Location
 import android.os.Bundle
 import android.util.Log
@@ -9,11 +14,16 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.wear.compose.material.Chip
 import androidx.wear.compose.material.ChipDefaults
 import androidx.wear.compose.material.MaterialTheme
@@ -25,12 +35,24 @@ import io.socket.client.IO
 import io.socket.client.Socket
 import io.socket.engineio.client.EngineIOException
 
-class MainActivity : ComponentActivity() {
+class MainActivity : ComponentActivity() , SensorEventListener {
     private lateinit var socket: Socket
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var sensorManager: SensorManager
+    private var heartRateSensor: Sensor? = null
+    private var stepCounterSensor: Sensor? = null
+    private var heartRate by mutableStateOf("En attente...")
+    private var steps by mutableStateOf("En attente...")
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        heartRateSensor = sensorManager.getDefaultSensor(Sensor.TYPE_HEART_RATE)
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.BODY_SENSORS) == PackageManager.PERMISSION_GRANTED) {
+            setupSensors()
+        } else {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.BODY_SENSORS), 1)
+        }
         setContent {
             WearApp {
                 connectAndSendMessage()
@@ -38,7 +60,18 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    private fun setupSensors() {
+        heartRateSensor = sensorManager.getDefaultSensor(Sensor.TYPE_HEART_RATE)
+        stepCounterSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
 
+        heartRateSensor?.also { sensor ->
+            sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_NORMAL)
+        }
+
+        stepCounterSensor?.also { steps ->
+            sensorManager.registerListener(this, steps, SensorManager.SENSOR_DELAY_UI)
+        }
+    }
 
     private fun getLastLocation(onLocationFetched: (String) -> Unit) {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
@@ -74,6 +107,10 @@ class MainActivity : ComponentActivity() {
     @Composable
     fun WearApp(onButtonClick: () -> Unit) {
         MyApplicationTheme {
+            Column(modifier = Modifier.fillMaxSize()) {
+                Text(text = "Fréquence cardiaque: $heartRate")
+                Text(text = "Nombre de pas: $steps")
+            }
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -88,6 +125,32 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+    override fun onSensorChanged(event: SensorEvent?) {
+        when (event?.sensor?.type) {
+            Sensor.TYPE_HEART_RATE -> {
+                heartRate = "Fréquence cardiaque: ${event.values.first()}"
+            }
+            Sensor.TYPE_STEP_COUNTER -> {
+                steps = "Nombre de pas: ${event.values.first()}"
+            }
+        }
+    }
+
+    /**
+     * Called when the accuracy of the registered sensor has changed.  Unlike
+     * onSensorChanged(), this is only called when this accuracy value changes.
+     *
+     *
+     * See the SENSOR_STATUS_* constants in
+     * [SensorManager][android.hardware.SensorManager] for details.
+     *
+     * @param accuracy The new accuracy of this sensor, one of
+     * `SensorManager.SENSOR_STATUS_*`
+     */
+    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
+        TODO("Not yet implemented")
+    }
+
     private fun connectAndSendMessage() {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         try {
@@ -96,9 +159,9 @@ class MainActivity : ComponentActivity() {
                 Log.d("SocketIO", "Connected to the server")
                 getLastLocation { location ->
                     runOnUiThread {
-                        socket.emit("messageFromWatch", "Hello from watch!")
-                        socket.emit("messageForlocation", "Message and location sent: $location")
-                        Log.d("SocketIO", "Message and location sent: $location")
+                        val message = "Location: $location, Heart Rate: $heartRate, Steps: $steps"
+                        socket.emit("messageFromWatch", message)
+                        Log.d("SocketIO", "Message envoyé: $message")
                     }
                 }
             }.on(Socket.EVENT_DISCONNECT) {
@@ -121,6 +184,10 @@ class MainActivity : ComponentActivity() {
             Log.e("SocketIO", "Exception: ${e.message}")
             e.printStackTrace()
         }
+    }
+    override fun onDestroy() {
+        super.onDestroy()
+        sensorManager.unregisterListener(this)
     }
 
 }
