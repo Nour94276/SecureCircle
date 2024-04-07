@@ -49,6 +49,8 @@ android {
 }
 
 dependencies {
+    implementation ("io.socket:socket.io-client:2.0.1")
+    implementation ("androidx.multidex:multidex:2.0.1")
     implementation ("com.google.android.gms:play-services-location:18.0.0")
     implementation ("org.osmdroid:osmdroid-android:6.1.10")
     implementation ("org.osmdroid:osmdroid-android:6.1.14")
